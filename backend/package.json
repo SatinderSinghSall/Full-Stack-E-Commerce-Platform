@@ -4,8 +4,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "set NODE_ENV=development && nodemon server.js",
-    "start": "set NODE_ENV=production && node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
+    "start": "cross-env NODE_ENV=production node server.js",
     "server": "nodemon server.js"
   },
   "author": "",
@@ -24,5 +24,8 @@
     "razorpay": "^2.9.4",
     "stripe": "^16.8.0",
     "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }
