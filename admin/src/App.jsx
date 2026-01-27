@@ -13,6 +13,14 @@ import Dashboard from "./pages/Dashboard";
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const currency = "₹";
 
+//!
+/*
+ To Run Backend:
+ - Local Development: npm run dev / .env.development
+ - Production: npm run build & npm run preview / .env.production
+*/
+//!
+
 const App = () => {
   const [token, setToken] = useState(
     localStorage.getItem("token") ? localStorage.getItem("token") : "",
@@ -21,6 +29,11 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem("token", token);
   }, [token]);
+
+  useEffect(() => {
+    console.log("MODE:", import.meta.env.MODE);
+    console.log("ADMIN BACKEND URL:", backendUrl);
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen">

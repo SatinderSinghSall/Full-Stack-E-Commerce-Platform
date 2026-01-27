@@ -17,6 +17,14 @@ import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/Verify";
 import Profile from "./pages/Profile";
 
+//!
+/*
+ To Run Backend:
+ - Local Development: npm run dev / .env.development
+ - Production: npm run build & npm run preview / .env.production
+*/
+//!
+
 const App = () => {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
