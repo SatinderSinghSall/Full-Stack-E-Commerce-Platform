@@ -13,12 +13,11 @@ const LatestCollection = () => {
   }, [products]);
 
   return (
-    <section className="my-20">
+    <section className="mt-10 mb-26">
       {/* Section Header */}
-      <div className="text-center mb-12 text-3xl">
+      <div className="text-center text-3xl py-8">
         <Title text1={"LATEST"} text2={"COLLECTIONS"} />
-
-        <p className="max-w-2xl mx-auto mt-4 text-sm sm:text-base text-gray-600 leading-relaxed">
+        <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
           Discover our newest handcrafted cane baskets and eco-friendly
           packaging solutions — designed for bulk orders, gifting, and everyday
           use.
@@ -26,27 +25,29 @@ const LatestCollection = () => {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        {latestProducts.map((item) => (
-          <div
-            key={item._id}
-            className="transition-transform duration-300 hover:-translate-y-1"
-          >
-            <ProductItem
-              id={item._id}
-              image={item.image}
-              name={item.name}
-              price={item.price}
-            />
-          </div>
-        ))}
+      <div className="w-full px-6 sm:px-10 lg:px-16">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-10 gap-y-16">
+          {latestProducts.map((item) => (
+            <div
+              key={item._id}
+              className="transition-transform duration-300 hover:-translate-y-1"
+            >
+              <ProductItem
+                id={item._id}
+                image={item.image}
+                name={item.name}
+                price={item.price}
+              />
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Call To Action */}
-      <div className="text-center mt-14">
+      {/* CTA */}
+      <div className="text-center mt-20">
         <Link
           to="/collection"
-          className="inline-block border border-black px-10 py-3 text-sm tracking-wide hover:bg-black hover:text-white transition-all duration-300"
+          className="inline-block border border-black px-14 py-4 text-sm tracking-wider hover:bg-black hover:text-white transition-all duration-300"
         >
           View All Collections
         </Link>

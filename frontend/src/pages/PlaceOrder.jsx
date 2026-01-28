@@ -73,7 +73,7 @@ const PlaceOrder = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      setLoading(true); // ✅ start loader
+      setLoading(true);
 
       let orderItems = [];
 
@@ -120,7 +120,7 @@ const PlaceOrder = () => {
           );
           if (responseRazorpay.data.success) {
             initPay(responseRazorpay.data.order);
-            return; // ⚠️ razorpay handles loader
+            return;
           }
           break;
         }
@@ -131,13 +131,13 @@ const PlaceOrder = () => {
     } catch (error) {
       toast.error(error.message);
     } finally {
-      setLoading(false); // ✅ stop loader
+      setLoading(false);
     }
   };
 
   return (
-    <>
-      {/* ✅ FULL SCREEN LOADER */}
+    <div className="px-6 sm:px-10 md:px-16 lg:px-20">
+      {/* FULL SCREEN LOADER */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -277,7 +277,7 @@ const PlaceOrder = () => {
           </div>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

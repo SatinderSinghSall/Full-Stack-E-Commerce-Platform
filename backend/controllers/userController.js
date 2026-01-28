@@ -113,4 +113,14 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser, adminLogin, getUserProfile };
+// Get total users (ADMIN)
+const getUserCount = async (req, res) => {
+  try {
+    const count = await userModel.countDocuments();
+    res.json({ success: true, count });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { loginUser, registerUser, adminLogin, getUserProfile, getUserCount };

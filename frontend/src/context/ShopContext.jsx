@@ -18,6 +18,13 @@ const ShopContextProvider = (props) => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
+  }, []);
+
   /* ---------------- ADD TO CART ---------------- */
   const addToCart = async (itemId) => {
     let cartData = structuredClone(cartItems);
@@ -132,12 +139,18 @@ const ShopContextProvider = (props) => {
     getProductsData();
   }, []);
 
+  // useEffect(() => {
+  //   if (!token && localStorage.getItem("token")) {
+  //     const savedToken = localStorage.getItem("token");
+  //     setToken(savedToken);
+  //     getUserCart(savedToken);
+  //   }
+  //   if (token) {
+  //     getUserCart(token);
+  //   }
+  // }, [token]);
+
   useEffect(() => {
-    if (!token && localStorage.getItem("token")) {
-      const savedToken = localStorage.getItem("token");
-      setToken(savedToken);
-      getUserCart(savedToken);
-    }
     if (token) {
       getUserCart(token);
     }

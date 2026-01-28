@@ -24,7 +24,7 @@ const Add = ({ token }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("Men");
+  const [category, setCategory] = useState("Decorations");
   const [bestseller, setBestseller] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -149,9 +149,9 @@ const Add = ({ token }) => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Men">Men</SelectItem>
-                      <SelectItem value="Women">Women</SelectItem>
-                      <SelectItem value="Kids">Kids</SelectItem>
+                      <SelectItem value="Decorations">Decorations</SelectItem>
+                      <SelectItem value="Gifts">Gifts</SelectItem>
+                      {/* <SelectItem value="Kids">Kids</SelectItem> */}
                     </SelectContent>
                   </Select>
                 </div>

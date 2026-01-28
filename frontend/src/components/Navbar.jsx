@@ -20,158 +20,152 @@ const Navbar = () => {
     localStorage.removeItem("token");
     setToken("");
     setCartItems({});
+    setVisible(false);
   };
 
   return (
-    /* Sticky Wrapper */
-    <div className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* Navbar */}
-      <div className="flex items-center justify-between py-5 font-medium px-4 sm:px-10">
-        {/* Logo */}
-        <Link to="/">
-          <p className="prata-regular text-xl sm:text-2xl leading-relaxed">
-            WholeSale Cane Baskets
-          </p>
-        </Link>
-
-        {/* Desktop Menu */}
-        <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
-          <NavLink to="/" className="flex flex-col items-center gap-1">
-            <p>HOME</p>
-          </NavLink>
-          <NavLink
-            to="/collection"
-            className="flex flex-col items-center gap-1"
-          >
-            <p>COLLECTION</p>
-          </NavLink>
-          <NavLink to="/about" className="flex flex-col items-center gap-1">
-            <p>ABOUT</p>
-          </NavLink>
-          <NavLink to="/contact" className="flex flex-col items-center gap-1">
-            <p>CONTACT</p>
-          </NavLink>
-        </ul>
-
-        {/* Right Icons */}
-        <div className="flex items-center gap-6">
-          {/* Search */}
-          <img
-            onClick={() => {
-              setShowSearch(true);
-              navigate("/collection");
-            }}
-            src={assets.search_icon}
-            className="w-5 cursor-pointer"
-            alt="search"
-          />
-
-          {/* Profile */}
-          <div className="group relative">
-            <img
-              onClick={() => (token ? null : navigate("/login"))}
-              className="w-5 cursor-pointer"
-              src={assets.profile_icon}
-              alt="profile"
-            />
-
-            {token && (
-              <div className="hidden group-hover:block absolute right-0 pt-4 z-50">
-                <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow">
-                  <p
-                    onClick={() => navigate("/profile")}
-                    className="cursor-pointer hover:text-black"
-                  >
-                    My Profile
-                  </p>
-
-                  <p
-                    onClick={() => navigate("/orders")}
-                    className="cursor-pointer hover:text-black"
-                  >
-                    Orders
-                  </p>
-                  <p
-                    onClick={logout}
-                    className="cursor-pointer hover:text-black"
-                  >
-                    Logout
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Cart */}
-          <Link to="/cart" className="relative">
-            <img src={assets.cart_icon} className="w-5 min-w-5" alt="cart" />
-            {getCartCount() > 0 && (
-              <span className="absolute -right-2 -bottom-2 min-w-[16px] h-[16px] px-1 bg-black text-white text-[10px] rounded-full flex items-center justify-center">
-                {getCartCount()}
-              </span>
-            )}
+    <>
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
+        <div className="px-4 sm:px-10 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          {/* LOGO */}
+          <Link to="/" className="w-full sm:w-auto">
+            <p className="prata-regular text-[22px] sm:text-[26px] text-center sm:text-left tracking-[0.02em] text-gray-900">
+              Wedding Gift House
+            </p>
           </Link>
 
-          {/* Mobile Menu Icon */}
-          <img
-            onClick={() => setVisible(true)}
-            src={assets.menu_icon}
-            className="w-5 cursor-pointer sm:hidden"
-            alt="menu"
-          />
-        </div>
-      </div>
+          {/* DESKTOP NAV */}
+          <nav className="hidden sm:flex items-center gap-10 text-[14px] tracking-wide text-gray-600">
+            {["/", "/collection", "/about", "/contact"].map((path, i) => (
+              <NavLink
+                key={path}
+                to={path}
+                className={({ isActive }) =>
+                  `relative pb-1 transition-all duration-200 ${
+                    isActive
+                      ? "text-gray-900 after:absolute after:left-0 after:-bottom-1 after:h-[1px] after:w-full after:bg-gray-900"
+                      : "hover:text-gray-900"
+                  }`
+                }
+              >
+                {["HOME", "COLLECTION", "ABOUT", "CONTACT"][i]}
+              </NavLink>
+            ))}
+          </nav>
 
-      {/* Mobile Sidebar */}
+          {/* ICONS */}
+          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-7 px-6 sm:px-0">
+            {/* Search */}
+            <img
+              src={assets.search_icon}
+              alt="search"
+              className="w-[18px] cursor-pointer opacity-70 hover:opacity-100 hover:scale-105 transition"
+              onClick={() => {
+                setShowSearch(true);
+                navigate("/collection");
+              }}
+            />
+
+            {/* Profile */}
+            <div className="relative group">
+              <img
+                src={assets.profile_icon}
+                alt="profile"
+                className="w-[18px] cursor-pointer opacity-70 hover:opacity-100 hover:scale-105 transition"
+                onClick={() => (!token ? navigate("/login") : null)}
+              />
+
+              {token && (
+                <div className="absolute right-0 mt-4 hidden group-hover:block z-50">
+                  <div className="bg-white border border-gray-100 rounded-lg shadow-lg text-sm w-36 overflow-hidden">
+                    <p
+                      onClick={() => navigate("/profile")}
+                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      My Profile
+                    </p>
+                    <p
+                      onClick={() => navigate("/orders")}
+                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      Orders
+                    </p>
+                    <p
+                      onClick={logout}
+                      className="px-4 py-2 hover:bg-gray-50 cursor-pointer"
+                    >
+                      Logout
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Cart */}
+            <Link to="/cart" className="relative">
+              <img
+                src={assets.cart_icon}
+                alt="cart"
+                className="w-[18px] opacity-70 hover:opacity-100 hover:scale-105 transition"
+              />
+              {getCartCount() > 0 && (
+                <span className="absolute -right-2 -bottom-2 min-w-[16px] h-[16px] bg-gray-900 text-white text-[10px] rounded-full flex items-center justify-center">
+                  {getCartCount()}
+                </span>
+              )}
+            </Link>
+
+            {/* Mobile Menu Button */}
+            <img
+              src={assets.menu_icon}
+              alt="menu"
+              className="w-[18px] cursor-pointer sm:hidden opacity-70 hover:opacity-100 hover:scale-105 transition"
+              onClick={() => setVisible(true)}
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* MOBILE MENU OVERLAY */}
       <div
-        className={`fixed top-0 right-0 bottom-0 z-50 bg-white overflow-hidden transition-all duration-300 ${
-          visible ? "w-full" : "w-0"
+        className={`fixed inset-0 z-50 bg-black/30 transition-opacity duration-300 ${
+          visible
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setVisible(false)}
+      />
+
+      {/* MOBILE DRAWER */}
+      <div
+        className={`fixed top-0 right-0 z-50 h-full w-[75%] max-w-xs bg-white shadow-xl transform transition-transform duration-300 ${
+          visible ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col text-gray-600">
-          <div
+        <div className="p-6">
+          <button
             onClick={() => setVisible(false)}
-            className="flex items-center gap-4 p-3 cursor-pointer"
+            className="mb-8 text-sm text-gray-600"
           >
-            <img
-              className="h-4 rotate-180"
-              src={assets.dropdown_icon}
-              alt="back"
-            />
-            <p>Back</p>
-          </div>
+            ← Back
+          </button>
 
-          <NavLink
-            onClick={() => setVisible(false)}
-            className="py-2 pl-6 border"
-            to="/"
-          >
-            HOME
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            className="py-2 pl-6 border"
-            to="/collection"
-          >
-            COLLECTION
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            className="py-2 pl-6 border"
-            to="/about"
-          >
-            ABOUT
-          </NavLink>
-          <NavLink
-            onClick={() => setVisible(false)}
-            className="py-2 pl-6 border"
-            to="/contact"
-          >
-            CONTACT
-          </NavLink>
+          <nav className="flex flex-col gap-6 text-[16px] tracking-wide text-gray-700">
+            {["/", "/collection", "/about", "/contact"].map((path, i) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={() => setVisible(false)}
+                className="hover:text-gray-900 transition"
+              >
+                {["HOME", "COLLECTION", "ABOUT", "CONTACT"][i]}
+              </NavLink>
+            ))}
+          </nav>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

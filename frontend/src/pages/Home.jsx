@@ -4,6 +4,8 @@ import LatestCollection from "../components/LatestCollection";
 import BestSeller from "../components/BestSeller";
 import OurPolicy from "../components/OurPolicy";
 import NewsletterBox from "../components/NewsletterBox";
+import Testimonials from "../components/Testimonials";
+import InstagramFeed from "../components/InstagramFeed";
 
 const Home = () => {
   return (
@@ -11,7 +13,9 @@ const Home = () => {
       <Hero />
       <LatestCollection />
       <BestSeller />
-      <OurPolicy />
+      <InstagramFeed />
+      <Testimonials />
+      {/* <OurPolicy /> */}
       {/* <NewsletterBox /> */}
     </div>
   );

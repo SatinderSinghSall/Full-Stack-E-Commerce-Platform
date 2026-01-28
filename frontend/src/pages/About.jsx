@@ -1,90 +1,112 @@
 import React from "react";
 import Title from "../components/Title";
-import { assets, assets2 } from "../assets/assets";
-import NewsletterBox from "../components/NewsletterBox";
+import { assets2 } from "../assets/assets";
+import { FiGift, FiLayers, FiUsers } from "react-icons/fi";
 
 const About = () => {
   return (
-    <div>
-      {/* Page Title */}
-      <div className="text-2xl text-center pt-8 border-t">
-        <Title text1={"ABOUT"} text2={"US"} />
+    <div className="bg-white">
+      {/* Header */}
+      <div className="pt-8 pb-10 text-center border-t text-4xl sm:text-5xl">
+        <Title text1="ABOUT" text2="US" />
+        <p className="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
+          Trusted wholesale and retail gifting solutions crafted for weddings,
+          celebrations, and meaningful occasions.
+        </p>
       </div>
 
       {/* About Section */}
-      <div className="my-10 flex flex-col md:flex-row gap-16">
-        <img
-          className="w-full md:max-w-[450px]"
-          src={assets2.about_img2}
-          alt="Handmade Cane Baskets"
-        />
+      <div className="max-w-7xl mx-auto px-6 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Image */}
+          <div className="relative">
+            <img
+              src={assets2.about_img2}
+              alt="Wedding Gift House Store"
+              className="w-full h-[520px] object-cover rounded-2xl shadow-lg"
+            />
+          </div>
 
-        <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
-          <p>
-            WholeSale Cane Baskets was founded with a deep appreciation for
-            traditional craftsmanship and a vision to bring beautifully
-            handcrafted cane products to businesses and customers across the
-            country. What started as a small initiative has grown into a trusted
-            wholesale and supply store for handmade baskets and packaging
-            solutions.
-          </p>
+          {/* Content */}
+          <div className="flex flex-col gap-6 text-gray-600 text-sm leading-relaxed">
+            <h2 className="text-3xl font-semibold text-gray-900">
+              Wedding Gift House
+            </h2>
 
-          <p>
-            We specialize in premium-quality cane baskets, gift hampers, and
-            eco-friendly packaging materials that combine durability,
-            functionality, and timeless design. Each product reflects the skill,
-            care, and dedication of experienced artisans who have perfected
-            their craft over generations.
-          </p>
+            <p>
+              Wedding Gift House is a dedicated wholesale and retail gifting
+              destination, specializing in elegant wedding gifts, return gifts,
+              and premium packaging solutions. Our products are designed to add
+              charm, meaning, and sophistication to every celebration.
+            </p>
 
-          <b className="text-gray-800">Our Mission</b>
+            <p>
+              From decorative gift boxes and handcrafted baskets to premium
+              return gifts and packaging accessories, our collection supports
+              event planners, retailers, and bulk buyers with quality-driven,
+              presentation-focused solutions.
+            </p>
 
-          <p>
-            Our mission is to support sustainable living while empowering
-            retailers, businesses, and individuals with reliable handmade
-            products. We aim to preserve traditional artistry, promote
-            eco-conscious alternatives, and deliver consistent quality at
-            competitive wholesale prices.
-          </p>
+            {/* Mission */}
+            <div className="mt-4 p-6 bg-gray-50 rounded-xl border">
+              <h3 className="text-base font-semibold text-gray-900 mb-2">
+                Our Mission
+              </h3>
+              <p>
+                To simplify gifting through reliable wholesale solutions,
+                consistent quality, and timeless designs — empowering businesses
+                and individuals to deliver memorable gifting experiences.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Why Choose Us */}
-      <div className="text-xl py-4">
-        <Title text1={"WHY"} text2={"CHOOSE US"} />
+      <div className="bg-gray-50 py-20">
+        <div className="text-center mb-14 text-4xl sm:text-5xl">
+          <Title text1="WHY" text2="CHOOSE US" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Card */}
+          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
+            <FiGift className="text-2xl text-gray-900 mb-4" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Curated Gifting Collection
+            </h4>
+            <p className="text-gray-600 text-sm">
+              A refined selection of wedding gifts, return gifts, decorative
+              boxes, baskets, and packaging items tailored for celebrations of
+              all sizes.
+            </p>
+          </div>
+
+          {/* Card */}
+          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
+            <FiLayers className="text-2xl text-gray-900 mb-4" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Wholesale & Bulk Expertise
+            </h4>
+            <p className="text-gray-600 text-sm">
+              Built for retailers and event professionals, offering scalable
+              supply, transparent pricing, and dependable fulfillment.
+            </p>
+          </div>
+
+          {/* Card */}
+          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
+            <FiUsers className="text-2xl text-gray-900 mb-4" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Trusted Gifting Partner
+            </h4>
+            <p className="text-gray-600 text-sm">
+              We focus on long-term relationships through consistent quality,
+              timely delivery, and a customer-first approach.
+            </p>
+          </div>
+        </div>
       </div>
-
-      <div className="flex flex-col md:flex-row text-sm mb-20">
-        <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Authentic Handmade Quality</b>
-          <p className="text-gray-600">
-            Every basket and product is carefully handcrafted using natural cane
-            materials, ensuring strength, longevity, and a unique finish in
-            every piece.
-          </p>
-        </div>
-
-        <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Wholesale & Bulk Expertise</b>
-          <p className="text-gray-600">
-            We specialize in bulk orders for retailers, gifting businesses,
-            events, and packaging needs, offering reliable supply and timely
-            fulfillment.
-          </p>
-        </div>
-
-        <div className="border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5">
-          <b>Customer-Centric Service</b>
-          <p className="text-gray-600">
-            From product selection to after-sales support, we are committed to
-            providing a smooth, transparent, and satisfying experience for every
-            customer.
-          </p>
-        </div>
-      </div>
-
-      {/* Newsletter */}
-      {/* <NewsletterBox /> */}
     </div>
   );
 };

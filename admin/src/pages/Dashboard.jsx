@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { backendUrl, currency } from "../App";
 import { toast } from "react-toastify";
-import { Package, ShoppingCart, IndianRupee, Clock } from "lucide-react";
+import { Package, ShoppingCart, IndianRupee, Clock, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,18 +21,26 @@ const Dashboard = ({ token }) => {
     orders: 0,
     revenue: 0,
     pending: 0,
+    users: 0,
   });
 
   const [recentOrders, setRecentOrders] = useState([]);
 
   const fetchDashboardData = async () => {
     try {
-      const [productsRes, ordersRes] = await Promise.all([
+      const [productsRes, ordersRes, usersRes] = await Promise.all([
         axios.get(backendUrl + "/api/product/list"),
         axios.post(backendUrl + "/api/order/list", {}, { headers: { token } }),
+        axios.get(backendUrl + "/api/user/count", {
+          headers: { token },
+        }),
       ]);
 
-      if (productsRes.data.success && ordersRes.data.success) {
+      if (
+        productsRes.data.success &&
+        ordersRes.data.success &&
+        usersRes.data.success
+      ) {
         const orders = ordersRes.data.orders;
 
         const revenue = orders
@@ -44,6 +52,7 @@ const Dashboard = ({ token }) => {
           orders: orders.length,
           revenue,
           pending: orders.filter((o) => !o.payment).length,
+          users: usersRes.data.count, // 👈 ADD THIS
         });
 
         setRecentOrders(orders.slice(0, 5));
@@ -81,6 +90,7 @@ const Dashboard = ({ token }) => {
           value={stats.pending}
           icon={<Clock />}
         />
+        <StatCard title="Users" value={stats.users} icon={<Users />} />
       </div>
 
       {/* Recent Orders */}
