@@ -1,32 +1,96 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { assets2 } from "../assets/assets";
+import { Link } from "react-router-dom";
+
+const images = [
+  assets2.hero_img1,
+  assets2.hero_img2,
+  assets2.hero_img3,
+  assets2.hero_img4,
+  assets2.hero_img5,
+];
 
 const Hero = () => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex flex-col sm:flex-row border border-gray-400">
-      {/* Hero Left Side */}
-      <div className="w-full sm:w-1/2 flex items-center justify-center py-10 sm:py-0">
-        <div className="text-[#414141]">
-          <div className="flex items-center gap-2">
-            <p className="w-8 md:w-11 h-[2px] bg-[#414141]"></p>
-            <p className=" font-medium text-sm md:text-base">PROFILE</p>
-          </div>
-          <h1 className="prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed">
-            Amit Jangid
-          </h1>
-          <div className="flex items-center gap-2">
-            <p className="font-semibold text-sm md:text-base">SHOP NOW</p>
-            <p className="w-8 md:w-11 h-[1px] bg-[#414141]"></p>
+    <section className="relative w-full h-[70vh] sm:h-[85vh] lg:h-[90vh] overflow-hidden">
+      {/* Background Images */}
+      {images.map((img, index) => (
+        <img
+          key={index}
+          src={img}
+          alt="Wedding Gift House"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+            index === current ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/20 sm:bg-gradient-to-r sm:from-black/50 sm:via-black/30 sm:to-transparent" />
+
+      {/* Content */}
+      <div className="relative z-10 h-full flex items-end sm:items-center">
+        <div className="max-w-7xl mx-auto px-6 pb-16 sm:pb-0 w-full">
+          <div className="max-w-xl text-white">
+            {/* Eyebrow */}
+            <p className="tracking-[0.25em] text-xs uppercase text-white/80 mb-4">
+              Wedding Gift House
+            </p>
+
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold leading-tight">
+              Traditional Wedding
+              <br />
+              Gifts & Decorations
+            </h1>
+
+            {/* Description */}
+            <p className="mt-5 text-sm sm:text-lg text-white/90 leading-relaxed">
+              Premium baskets, return gifts & eco-friendly packaging solutions
+              crafted for weddings, celebrations & bulk gifting across India.
+            </p>
+
+            {/* Actions */}
+            <div className="mt-8 sm:mt-10 flex flex-wrap gap-4">
+              <Link
+                to="/collection"
+                className="bg-white text-black px-7 py-3 text-sm tracking-wide hover:bg-black hover:text-white transition duration-300"
+              >
+                Shop Collections
+              </Link>
+
+              <Link
+                to="/contact"
+                className="border border-white/80 px-7 py-3 text-sm tracking-wide text-white hover:bg-white hover:text-black transition duration-300"
+              >
+                Bulk Orders
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-      {/* Hero Right Side */}
-      <img
-        className="w-full sm:w-1/2 object-cover"
-        src={assets2.main_hero_img}
-        alt="Cane baskets collection"
-      />
-    </div>
+
+      {/* Slide Indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        {images.map((_, i) => (
+          <span
+            key={i}
+            className={`h-2 w-2 rounded-full transition-all ${
+              i === current ? "bg-white w-5" : "bg-white/50"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
   );
 };
 

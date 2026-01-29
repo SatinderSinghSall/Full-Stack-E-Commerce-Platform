@@ -1,9 +1,23 @@
 import main_hero_img from "./main-hero-img.jpg";
 import about_img2 from "./about-img.jpg";
+import hero_img1 from "./hero_img1.jpeg";
+import hero_img2 from "./hero_img2.jpeg";
+import hero_img3 from "./hero_img3.jpg";
+import hero_img4 from "./hero_img4.jpeg";
+import hero_img5 from "./hero_img5.jpeg";
+import about_us from "./about-us.jpeg";
+import contact_us from "./contact-us.jpeg";
 
 export const assets2 = {
   main_hero_img,
   about_img2,
+  hero_img1,
+  hero_img2,
+  hero_img3,
+  hero_img4,
+  hero_img5,
+  about_us,
+  contact_us,
 };
 
 import p_img1 from "./p_img1.png";

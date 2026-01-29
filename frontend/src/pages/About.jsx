@@ -5,57 +5,57 @@ import { FiGift, FiLayers, FiUsers } from "react-icons/fi";
 
 const About = () => {
   return (
-    <div className="bg-white">
+    <div className="bg-[#FFF8F1]">
       {/* Header */}
-      <div className="pt-8 pb-10 text-center border-t text-4xl sm:text-5xl">
+      <div className="pt-10 pb-12 text-center border-t border-[#e6d6c6]">
         <Title text1="ABOUT" text2="US" />
-        <p className="mt-3 text-lg text-gray-500 max-w-2xl mx-auto">
-          Trusted wholesale and retail gifting solutions crafted for weddings,
-          celebrations, and meaningful occasions.
+        <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          Celebrating traditions with thoughtfully curated wedding gifts,
+          festive décor, and timeless packaging solutions.
         </p>
       </div>
 
       {/* About Section */}
-      <div className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div className="max-w-7xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
           {/* Image */}
           <div className="relative">
+            <div className="absolute inset-0 rounded-3xl border border-[#e7cfa8] pointer-events-none" />
             <img
-              src={assets2.about_img2}
+              src={assets2.about_us}
               alt="Wedding Gift House Store"
-              className="w-full h-[520px] object-cover rounded-2xl shadow-lg"
+              className="w-full h-[520px] object-cover rounded-3xl shadow-md"
             />
           </div>
 
           {/* Content */}
-          <div className="flex flex-col gap-6 text-gray-600 text-sm leading-relaxed">
-            <h2 className="text-3xl font-semibold text-gray-900">
+          <div className="flex flex-col gap-6 text-gray-700 text-sm leading-relaxed">
+            <h2 className="text-3xl sm:text-4xl font-semibold text-gray-900">
               Wedding Gift House
             </h2>
 
             <p>
-              Wedding Gift House is a dedicated wholesale and retail gifting
-              destination, specializing in elegant wedding gifts, return gifts,
-              and premium packaging solutions. Our products are designed to add
-              charm, meaning, and sophistication to every celebration.
+              Wedding Gift House is a trusted destination for traditional
+              wedding gifts, return gifts, and festive packaging. Our
+              collections are inspired by Indian celebrations — rich in culture,
+              warmth, and craftsmanship.
             </p>
 
             <p>
-              From decorative gift boxes and handcrafted baskets to premium
-              return gifts and packaging accessories, our collection supports
-              event planners, retailers, and bulk buyers with quality-driven,
-              presentation-focused solutions.
+              From handcrafted baskets and decorative trays to premium gift
+              boxes and bulk gifting essentials, we support families, retailers,
+              and event planners with products that elevate every ceremony.
             </p>
 
             {/* Mission */}
-            <div className="mt-4 p-6 bg-gray-50 rounded-xl border">
+            <div className="mt-4 p-6 bg-[#FFFBF6] rounded-2xl border border-[#ead9c5]">
               <h3 className="text-base font-semibold text-gray-900 mb-2">
-                Our Mission
+                Our Promise
               </h3>
               <p>
-                To simplify gifting through reliable wholesale solutions,
-                consistent quality, and timeless designs — empowering businesses
-                and individuals to deliver memorable gifting experiences.
+                To honor traditions through quality craftsmanship, reliable
+                wholesale supply, and designs that make every wedding moment
+                feel special.
               </p>
             </div>
           </div>
@@ -63,46 +63,45 @@ const About = () => {
       </div>
 
       {/* Why Choose Us */}
-      <div className="bg-gray-50 py-20">
-        <div className="text-center mb-14 text-4xl sm:text-5xl">
+      <div className="bg-gradient-to-b from-[#FFF3E4] to-[#FFF8F1] py-24">
+        <div className="text-center mb-16">
           <Title text1="WHY" text2="CHOOSE US" />
         </div>
 
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Card */}
-          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-            <FiGift className="text-2xl text-gray-900 mb-4" />
+          <div className="bg-[#FFFBF6] p-8 rounded-3xl border border-[#ead9c5] shadow-sm hover:shadow-md transition">
+            <FiGift className="text-2xl text-[#8b5a2b] mb-4" />
             <h4 className="font-semibold text-gray-900 mb-2">
-              Curated Gifting Collection
+              Festive Gifting Collection
             </h4>
             <p className="text-gray-600 text-sm">
-              A refined selection of wedding gifts, return gifts, decorative
-              boxes, baskets, and packaging items tailored for celebrations of
-              all sizes.
+              Traditional wedding gifts, decorative trays, baskets, and return
+              gift solutions designed for Indian ceremonies and celebrations.
             </p>
           </div>
 
           {/* Card */}
-          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-            <FiLayers className="text-2xl text-gray-900 mb-4" />
+          <div className="bg-[#FFFBF6] p-8 rounded-3xl border border-[#ead9c5] shadow-sm hover:shadow-md transition">
+            <FiLayers className="text-2xl text-[#8b5a2b] mb-4" />
             <h4 className="font-semibold text-gray-900 mb-2">
-              Wholesale & Bulk Expertise
+              Bulk & Wholesale Strength
             </h4>
             <p className="text-gray-600 text-sm">
-              Built for retailers and event professionals, offering scalable
-              supply, transparent pricing, and dependable fulfillment.
+              Seamless bulk ordering, consistent quality, and pricing tailored
+              for retailers, wedding planners, and large events.
             </p>
           </div>
 
           {/* Card */}
-          <div className="bg-white p-8 rounded-2xl border shadow-sm hover:shadow-md transition">
-            <FiUsers className="text-2xl text-gray-900 mb-4" />
+          <div className="bg-[#FFFBF6] p-8 rounded-3xl border border-[#ead9c5] shadow-sm hover:shadow-md transition">
+            <FiUsers className="text-2xl text-[#8b5a2b] mb-4" />
             <h4 className="font-semibold text-gray-900 mb-2">
-              Trusted Gifting Partner
+              Rooted in Trust
             </h4>
             <p className="text-gray-600 text-sm">
-              We focus on long-term relationships through consistent quality,
-              timely delivery, and a customer-first approach.
+              Built on long-term relationships, timely delivery, and a deep
+              understanding of traditional Indian wedding needs.
             </p>
           </div>
         </div>
