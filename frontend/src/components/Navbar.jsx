@@ -77,7 +77,7 @@ const Navbar = () => {
               />
 
               {token && (
-                <div className="absolute right-0 mt-4 hidden group-hover:block z-50">
+                <div className="absolute right-0 top-full pt-2 hidden group-hover:block z-50">
                   <div className="bg-white border border-gray-100 rounded-lg shadow-lg text-sm w-36 overflow-hidden">
                     <p
                       onClick={() => navigate("/profile")}

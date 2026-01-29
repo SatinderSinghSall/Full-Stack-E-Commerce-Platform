@@ -16,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/Verify";
 import Profile from "./pages/Profile";
+import ScrollToTop from "./components/ScrollToTop";
 
 //!
 /*
@@ -28,11 +29,11 @@ import Profile from "./pages/Profile";
 const App = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <ScrollToTop />
       <ToastContainer />
       <Navbar />
       <SearchBar />
 
-      {/* MAIN CONTENT */}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />

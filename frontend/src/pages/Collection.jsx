@@ -3,6 +3,7 @@ import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
+import CollectionSkeleton from "../components/CollectionSkeleton";
 
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
@@ -11,6 +12,7 @@ const Collection = () => {
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relavent");
+  const isLoading = products.length === 0;
 
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
@@ -182,17 +184,21 @@ const Collection = () => {
           </div>
 
           {/* Map Products */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-            {filterProducts.map((item, index) => (
-              <ProductItem
-                key={index}
-                name={item.name}
-                id={item._id}
-                price={item.price}
-                image={item.image}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <CollectionSkeleton count={12} />
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+              {filterProducts.map((item, index) => (
+                <ProductItem
+                  key={index}
+                  name={item.name}
+                  id={item._id}
+                  price={item.price}
+                  image={item.image}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -2,15 +2,20 @@ import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "./Title";
 import ProductItem from "./ProductItem";
+import BestSellerSkeleton from "./BestSellerSkeleton";
 
 const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
 
   useEffect(() => {
-    const bestProduct = products.filter((item) => item.bestseller);
-    setBestSeller(bestProduct.slice(0, 5));
+    if (products.length > 0) {
+      const bestProduct = products.filter((item) => item.bestseller);
+      setBestSeller(bestProduct.slice(0, 5));
+    }
   }, [products]);
+
+  const isLoading = products.length === 0;
 
   return (
     <section className="my-10">
@@ -26,21 +31,25 @@ const BestSeller = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {bestSeller.map((item) => (
-            <div
-              key={item._id}
-              className="transition-transform duration-300 hover:-translate-y-1"
-            >
-              <ProductItem
-                id={item._id}
-                name={item.name}
-                image={item.image}
-                price={item.price}
-              />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <BestSellerSkeleton count={5} />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {bestSeller.map((item) => (
+              <div
+                key={item._id}
+                className="transition-transform duration-300 hover:-translate-y-1"
+              >
+                <ProductItem
+                  id={item._id}
+                  name={item.name}
+                  image={item.image}
+                  price={item.price}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

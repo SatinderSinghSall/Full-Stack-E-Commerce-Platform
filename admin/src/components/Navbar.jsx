@@ -30,7 +30,7 @@ const Navbar = ({ setToken }) => {
           </div>
 
           <div className="leading-tight">
-            <p className="text-lg font-semibold">Weeding Gift House</p>
+            <p className="text-lg font-semibold">Wedding Gift House</p>
             <p className="text-xs text-muted-foreground">Admin Panel</p>
           </div>
         </div>

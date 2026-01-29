@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import ProductSkeleton from "../components/ProductSkeleton";
 
 const Product = () => {
   const { productId } = useParams();
@@ -22,6 +23,10 @@ const Product = () => {
   useEffect(() => {
     fetchProductData();
   }, [productId, products]);
+
+  if (!productData) {
+    return <ProductSkeleton />;
+  }
 
   return productData ? (
     <div className="px-6 sm:px-10 md:px-16 lg:px-20 border-t-2 pt-10 transition-opacity duration-500 opacity-100">
