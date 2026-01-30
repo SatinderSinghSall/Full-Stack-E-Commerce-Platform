@@ -24,13 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import OrderDetailsDialog from "@/components/OrderDetailsDialog";
 
 const ORDERS_PER_PAGE = 6;
 
@@ -38,10 +32,13 @@ const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  /* ---------------- FETCH ---------------- */
+  /* ---------------- FETCH ORDERS ---------------- */
   const fetchAllOrders = async () => {
     if (!token) return;
     try {
@@ -51,6 +48,7 @@ const Orders = ({ token }) => {
         {},
         { headers: { token } },
       );
+
       if (res.data.success) {
         setOrders(res.data.orders.reverse());
       }
@@ -65,7 +63,7 @@ const Orders = ({ token }) => {
     fetchAllOrders();
   }, [token]);
 
-  /* ---------------- STATUS ---------------- */
+  /* ---------------- UPDATE STATUS ---------------- */
   const statusHandler = async (status, orderId) => {
     try {
       await axios.post(
@@ -83,6 +81,7 @@ const Orders = ({ token }) => {
   const filteredOrders = useMemo(() => {
     if (!search) return orders;
     const s = search.toLowerCase();
+
     return orders.filter(
       (o) =>
         `${o.address.firstName} ${o.address.lastName}`
@@ -98,17 +97,14 @@ const Orders = ({ token }) => {
 
   /* ---------------- PAGINATION ---------------- */
   const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * ORDERS_PER_PAGE,
     currentPage * ORDERS_PER_PAGE,
   );
 
-  /* Scroll to top on page change */
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
   return (
@@ -156,6 +152,8 @@ const Orders = ({ token }) => {
                   key={order._id}
                   order={order}
                   statusHandler={statusHandler}
+                  setSelectedOrder={setSelectedOrder}
+                  setOpenDialog={setOpenDialog}
                 />
               ))
             )}
@@ -173,6 +171,8 @@ const Orders = ({ token }) => {
               key={order._id}
               order={order}
               statusHandler={statusHandler}
+              setSelectedOrder={setSelectedOrder}
+              setOpenDialog={setOpenDialog}
             />
           ))
         )}
@@ -211,12 +211,24 @@ const Orders = ({ token }) => {
           </Button>
         </div>
       )}
+
+      {/* ================= ORDER DETAILS DIALOG ================= */}
+      <OrderDetailsDialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        order={selectedOrder}
+      />
     </div>
   );
 };
 
 /* ================= DESKTOP ROW ================= */
-const DesktopRow = ({ order, statusHandler }) => (
+const DesktopRow = ({
+  order,
+  statusHandler,
+  setSelectedOrder,
+  setOpenDialog,
+}) => (
   <TableRow className="align-top">
     <TableCell>
       <div className="flex gap-3">
@@ -252,33 +264,51 @@ const DesktopRow = ({ order, statusHandler }) => (
     </TableCell>
 
     <TableCell>
-      <Select
-        value={order.status}
-        onValueChange={(v) => statusHandler(v, order._id)}
-      >
-        <SelectTrigger className="w-[160px]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {[
-            "Order Placed",
-            "Packing",
-            "Shipped",
-            "Out for delivery",
-            "Delivered",
-          ].map((s) => (
-            <SelectItem key={s} value={s}>
-              {s}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="space-y-2">
+        <Select
+          value={order.status}
+          onValueChange={(v) => statusHandler(v, order._id)}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {[
+              "Order Placed",
+              "Packing",
+              "Shipped",
+              "Out for delivery",
+              "Delivered",
+            ].map((s) => (
+              <SelectItem key={s} value={s}>
+                {s}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            setSelectedOrder(order);
+            setOpenDialog(true);
+          }}
+        >
+          View More
+        </Button>
+      </div>
     </TableCell>
   </TableRow>
 );
 
 /* ================= MOBILE CARD ================= */
-const MobileOrderCard = ({ order, statusHandler }) => (
+const MobileOrderCard = ({
+  order,
+  statusHandler,
+  setSelectedOrder,
+  setOpenDialog,
+}) => (
   <div className="border rounded-lg p-4 space-y-3 bg-white">
     <div className="flex justify-between">
       <div>
@@ -329,6 +359,18 @@ const MobileOrderCard = ({ order, statusHandler }) => (
         ))}
       </SelectContent>
     </Select>
+
+    <Button
+      size="sm"
+      variant="outline"
+      className="w-full"
+      onClick={() => {
+        setSelectedOrder(order);
+        setOpenDialog(true);
+      }}
+    >
+      View More
+    </Button>
   </div>
 );
 
