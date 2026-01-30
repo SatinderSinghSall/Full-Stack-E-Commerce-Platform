@@ -11,8 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/Users";
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL;
-export const currency = "₹";
+// export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+// export const currency = "₹";
 
 //!
 /*
