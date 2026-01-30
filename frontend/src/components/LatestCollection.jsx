@@ -16,6 +16,7 @@ const LatestCollection = () => {
   }, [products]);
 
   const isLoading = products.length === 0;
+  const isEmpty = !isLoading && latestProducts.length === 0;
 
   return (
     <section className="mt-10 mb-26">
@@ -29,10 +30,20 @@ const LatestCollection = () => {
         </p>
       </div>
 
-      {/* Products Grid */}
+      {/* Content */}
       <div className="w-full px-6 sm:px-10 lg:px-16">
         {isLoading ? (
           <LatestCollectionSkeleton count={8} />
+        ) : isEmpty ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              No products added yet
+            </h3>
+            <p className="text-gray-500 max-w-md">
+              Our latest collections will appear here once products are added.
+              Please check back soon.
+            </p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-10 gap-y-16">
             {latestProducts.map((item) => (
@@ -53,7 +64,7 @@ const LatestCollection = () => {
       </div>
 
       {/* CTA */}
-      {!isLoading && (
+      {!isLoading && !isEmpty && (
         <div className="text-center mt-20">
           <Link
             to="/collection"

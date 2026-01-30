@@ -16,6 +16,7 @@ const BestSeller = () => {
   }, [products]);
 
   const isLoading = products.length === 0;
+  const isEmpty = !isLoading && bestSeller.length === 0;
 
   return (
     <section className="my-10">
@@ -30,9 +31,19 @@ const BestSeller = () => {
           </p>
         </div>
 
-        {/* Products Grid */}
+        {/* Content */}
         {isLoading ? (
           <BestSellerSkeleton count={5} />
+        ) : isEmpty ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              No best sellers yet
+            </h3>
+            <p className="text-gray-500 max-w-md">
+              Best-selling products will appear here once they are marked by the
+              admin. Please check back soon.
+            </p>
+          </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {bestSeller.map((item) => (

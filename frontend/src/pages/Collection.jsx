@@ -18,6 +18,7 @@ const Collection = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const isLoading = products.length === 0;
+  const isEmpty = !isLoading && filterProducts.length === 0;
 
   /* -------------------- FILTER HANDLERS -------------------- */
   const toggleCategory = (e) => {
@@ -69,11 +70,9 @@ const Collection = () => {
       case "low-high":
         setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
         break;
-
       case "high-low":
         setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
         break;
-
       default:
         applyFilter();
         break;
@@ -83,7 +82,7 @@ const Collection = () => {
   /* -------------------- EFFECTS -------------------- */
   useEffect(() => {
     applyFilter();
-    setCurrentPage(1); // reset pagination on filter/search change
+    setCurrentPage(1);
   }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
@@ -91,13 +90,10 @@ const Collection = () => {
   }, [sortType]);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  /* -------------------- PAGINATION LOGIC -------------------- */
+  /* -------------------- PAGINATION -------------------- */
   const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);
 
   const paginatedProducts = filterProducts.slice(
@@ -113,9 +109,7 @@ const Collection = () => {
     if (start > 1) pages.push(1);
     if (start > 2) pages.push("...");
 
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
+    for (let i = start; i <= end; i++) pages.push(i);
 
     if (end < totalPages - 1) pages.push("...");
     if (end < totalPages) pages.push(totalPages);
@@ -141,7 +135,6 @@ const Collection = () => {
             />
           </p>
 
-          {/* Category */}
           <div
             className={`border border-gray-300 pl-5 py-3 mt-6 ${
               showFilter ? "" : "hidden"
@@ -151,7 +144,6 @@ const Collection = () => {
             <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
               <p className="flex gap-2">
                 <input
-                  className="w-3"
                   type="checkbox"
                   value="Decorations"
                   onChange={toggleCategory}
@@ -160,7 +152,6 @@ const Collection = () => {
               </p>
               <p className="flex gap-2">
                 <input
-                  className="w-3"
                   type="checkbox"
                   value="Gifts"
                   onChange={toggleCategory}
@@ -179,30 +170,52 @@ const Collection = () => {
               onChange={(e) => setSortType(e.target.value)}
               className="border-2 border-gray-300 text-sm px-2"
             >
-              <option value="relavent">Sort by: Relavent</option>
+              <option value="relavent">Sort by: Relevant</option>
               <option value="low-high">Sort by: Low to High</option>
               <option value="high-low">Sort by: High to Low</option>
             </select>
           </div>
 
-          {/* Products */}
+          {/* Products / Empty State */}
           {isLoading ? (
             <CollectionSkeleton count={12} />
+          ) : isEmpty ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                No products available
+              </h2>
+              <p className="text-gray-500 max-w-md mb-6">
+                Products haven’t been added to this collection yet. Please check
+                back later.
+              </p>
+
+              {(category.length > 0 || subCategory.length > 0 || search) && (
+                <button
+                  onClick={() => {
+                    setCategory([]);
+                    setSubCategory([]);
+                    setCurrentPage(1);
+                  }}
+                  className="px-6 py-2 border border-black hover:bg-black hover:text-white transition"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
                 {paginatedProducts.map((item) => (
                   <ProductItem
                     key={item._id}
-                    name={item.name}
                     id={item._id}
+                    name={item.name}
                     price={item.price}
                     image={item.image}
                   />
                 ))}
               </div>
 
-              {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
                   <button
@@ -230,7 +243,7 @@ const Collection = () => {
                       <button
                         key={i}
                         onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 border rounded transition ${
+                        className={`px-3 py-1 border rounded ${
                           currentPage === page
                             ? "bg-black text-white"
                             : "hover:bg-gray-100"
