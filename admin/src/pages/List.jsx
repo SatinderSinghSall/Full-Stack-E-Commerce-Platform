@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { backendUrl, currency } from "../App";
+import { backendUrl, currency } from "@/config";
 import { Loader2 } from "lucide-react";
 
 import {
