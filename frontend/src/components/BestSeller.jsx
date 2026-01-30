@@ -7,16 +7,25 @@ import BestSellerSkeleton from "./BestSellerSkeleton";
 const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    if (products.length > 0) {
-      const bestProduct = products.filter((item) => item.bestseller);
-      setBestSeller(bestProduct.slice(0, 5));
-    }
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+
+      if (products.length > 0) {
+        const bestProduct = products.filter((item) => item.bestseller);
+        setBestSeller(bestProduct.slice(0, 5));
+      } else {
+        setBestSeller([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [products]);
 
-  const isLoading = products.length === 0;
-  const isEmpty = !isLoading && bestSeller.length === 0;
+  const isLoading = pageLoading;
+  const isEmpty = !pageLoading && bestSeller.length === 0;
 
   return (
     <section className="my-10">

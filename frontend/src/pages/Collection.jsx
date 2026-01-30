@@ -16,9 +16,10 @@ const Collection = () => {
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relavent");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageLoading, setPageLoading] = useState(true);
 
-  const isLoading = products.length === 0;
-  const isEmpty = !isLoading && filterProducts.length === 0;
+  const isLoading = pageLoading;
+  const isEmpty = !pageLoading && filterProducts.length === 0;
 
   /* -------------------- FILTER HANDLERS -------------------- */
   const toggleCategory = (e) => {
@@ -92,6 +93,14 @@ const Collection = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 300); // small delay avoids flicker
+
+    return () => clearTimeout(timer);
+  }, [products]);
 
   /* -------------------- PAGINATION -------------------- */
   const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);

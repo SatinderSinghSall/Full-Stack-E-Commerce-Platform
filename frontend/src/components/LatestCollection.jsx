@@ -8,15 +8,30 @@ import LatestCollectionSkeleton from "./LatestCollectionSkeleton";
 const LatestCollection = () => {
   const { products } = useContext(ShopContext);
   const [latestProducts, setLatestProducts] = useState([]);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    if (products.length > 0) {
-      setLatestProducts(products.slice(0, 10));
-    }
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+
+      if (products.length > 0) {
+        setLatestProducts(products.slice(0, 10));
+      } else {
+        setLatestProducts([]);
+      }
+    }, 300); // prevents flicker
+
+    return () => clearTimeout(timer);
   }, [products]);
 
-  const isLoading = products.length === 0;
-  const isEmpty = !isLoading && latestProducts.length === 0;
+  // useEffect(() => {
+  //   if (products.length > 0) {
+  //     setLatestProducts(products.slice(0, 10));
+  //   }
+  // }, [products]);
+
+  const isLoading = pageLoading;
+  const isEmpty = !pageLoading && products.length === 0;
 
   return (
     <section className="mt-10 mb-26">
