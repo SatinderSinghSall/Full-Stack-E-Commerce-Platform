@@ -5,15 +5,21 @@ import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 import CollectionSkeleton from "../components/CollectionSkeleton";
 
+const ITEMS_PER_PAGE = 16;
+
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
+
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relavent");
+  const [currentPage, setCurrentPage] = useState(1);
+
   const isLoading = products.length === 0;
 
+  /* -------------------- FILTER HANDLERS -------------------- */
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -30,6 +36,7 @@ const Collection = () => {
     }
   };
 
+  /* -------------------- APPLY FILTER -------------------- */
   const applyFilter = () => {
     let productsCopy = products.slice();
 
@@ -54,6 +61,7 @@ const Collection = () => {
     setFilterProducts(productsCopy);
   };
 
+  /* -------------------- SORT -------------------- */
   const sortProduct = () => {
     let fpCopy = filterProducts.slice();
 
@@ -72,18 +80,54 @@ const Collection = () => {
     }
   };
 
+  /* -------------------- EFFECTS -------------------- */
   useEffect(() => {
     applyFilter();
+    setCurrentPage(1); // reset pagination on filter/search change
   }, [category, subCategory, search, showSearch, products]);
 
   useEffect(() => {
     sortProduct();
   }, [sortType]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [currentPage]);
+
+  /* -------------------- PAGINATION LOGIC -------------------- */
+  const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);
+
+  const paginatedProducts = filterProducts.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const start = Math.max(1, currentPage - 1);
+    const end = Math.min(totalPages, currentPage + 1);
+
+    if (start > 1) pages.push(1);
+    if (start > 2) pages.push("...");
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < totalPages - 1) pages.push("...");
+    if (end < totalPages) pages.push(totalPages);
+
+    return pages;
+  };
+
+  /* -------------------- JSX -------------------- */
   return (
     <div className="px-6 sm:px-10 md:px-16 lg:px-20">
       <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
-        {/* Filter Options */}
+        {/* Filters */}
         <div className="min-w-60">
           <p
             onClick={() => setShowFilter(!showFilter)}
@@ -96,9 +140,12 @@ const Collection = () => {
               alt=""
             />
           </p>
-          {/* Category Filter */}
+
+          {/* Category */}
           <div
-            className={`border border-gray-300 pl-5 py-3 mt-6 ${showFilter ? "" : "hidden"} sm:block`}
+            className={`border border-gray-300 pl-5 py-3 mt-6 ${
+              showFilter ? "" : "hidden"
+            } sm:block`}
           >
             <p className="mb-3 text-sm font-medium">CATEGORIES</p>
             <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
@@ -120,59 +167,14 @@ const Collection = () => {
                 />
                 Gifts
               </p>
-              {/* <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                value={"Kids"}
-                onChange={toggleCategory}
-              />{" "}
-              kids
-            </p> */}
             </div>
           </div>
-          {/* SubCategory Filter */}
-          {/* <div
-          className={`border border-gray-300 pl-5 py-3 my-5 ${showFilter ? "" : "hidden"} sm:block`}
-        >
-          <p className="mb-3 text-sm font-medium">TYPE</p>
-          <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                value={"Topwear"}
-                onChange={toggleSubCategory}
-              />{" "}
-              Topwear
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                value={"Bottomwear"}
-                onChange={toggleSubCategory}
-              />{" "}
-              Bottomwear
-            </p>
-            <p className="flex gap-2">
-              <input
-                className="w-3"
-                type="checkbox"
-                value={"Winterwear"}
-                onChange={toggleSubCategory}
-              />{" "}
-              Winterwear
-            </p>
-          </div>
-        </div> */}
         </div>
 
         {/* Right Side */}
         <div className="flex-1">
           <div className="flex justify-between text-base sm:text-2xl mb-4">
             <Title text1={"ALL"} text2={"COLLECTIONS"} />
-            {/* Porduct Sort */}
             <select
               onChange={(e) => setSortType(e.target.value)}
               className="border-2 border-gray-300 text-sm px-2"
@@ -183,21 +185,80 @@ const Collection = () => {
             </select>
           </div>
 
-          {/* Map Products */}
+          {/* Products */}
           {isLoading ? (
             <CollectionSkeleton count={12} />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-              {filterProducts.map((item, index) => (
-                <ProductItem
-                  key={index}
-                  name={item.name}
-                  id={item._id}
-                  price={item.price}
-                  image={item.image}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+                {paginatedProducts.map((item) => (
+                  <ProductItem
+                    key={item._id}
+                    name={item.name}
+                    id={item._id}
+                    price={item.price}
+                    image={item.image}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border rounded disabled:opacity-40"
+                  >
+                    First
+                  </button>
+
+                  <button
+                    onClick={() => setCurrentPage((p) => p - 1)}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 border rounded disabled:opacity-40"
+                  >
+                    Prev
+                  </button>
+
+                  {getPageNumbers().map((page, i) =>
+                    page === "..." ? (
+                      <span key={i} className="px-2 text-gray-500">
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 border rounded transition ${
+                          currentPage === page
+                            ? "bg-black text-white"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ),
+                  )}
+
+                  <button
+                    onClick={() => setCurrentPage((p) => p + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 border rounded disabled:opacity-40"
+                  >
+                    Next
+                  </button>
+
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 border rounded disabled:opacity-40"
+                  >
+                    Last
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

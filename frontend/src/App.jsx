@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Verify from "./pages/Verify";
 import Profile from "./pages/Profile";
 import ScrollToTop from "./components/ScrollToTop";
+import { Toaster } from "react-hot-toast";
 
 //!
 /*
@@ -31,6 +32,7 @@ const App = () => {
     <div className="min-h-screen flex flex-col bg-gray-50">
       <ScrollToTop />
       <ToastContainer />
+      <Toaster position="top-right" />
       <Navbar />
       <SearchBar />
 
