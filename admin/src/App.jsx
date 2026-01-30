@@ -12,7 +12,6 @@ import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/Users";
 import { backendUrl } from "./config";
 
-
 // export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 // export const currency = "₹";
 
@@ -25,18 +24,22 @@ import { backendUrl } from "./config";
 //!
 
 const App = () => {
-  const [token, setToken] = useState(
-    localStorage.getItem("token") ? localStorage.getItem("token") : "",
-  );
+  const [token, setToken] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("token", token);
-  }, [token]);
-
-  useEffect(() => {
-    console.log("MODE:", import.meta.env.MODE);
-    console.log("ADMIN BACKEND URL:", backendUrl);
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
