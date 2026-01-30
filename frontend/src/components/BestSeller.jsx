@@ -7,41 +7,37 @@ import BestSellerSkeleton from "./BestSellerSkeleton";
 const BestSeller = () => {
   const { products } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
-  const [pageLoading, setPageLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
+    // if products are not yet available, keep loading
+    if (!products || products.length === 0) {
+      setLoading(true);
+      return;
+    }
 
-      if (products.length > 0) {
-        const bestProduct = products.filter((item) => item.bestseller);
-        setBestSeller(bestProduct.slice(0, 5));
-      } else {
-        setBestSeller([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
+    // once products arrive
+    const bestProduct = products.filter((item) => item.bestseller);
+    setBestSeller(bestProduct.slice(0, 5));
+    setLoading(false);
   }, [products]);
 
-  const isLoading = pageLoading;
-  const isEmpty = !pageLoading && bestSeller.length === 0;
+  const isEmpty = !loading && bestSeller.length === 0;
 
   return (
     <section className="my-10">
       <div className="px-6 sm:px-10 md:px-16 lg:px-20">
-        {/* Section Header */}
+        {/* Header */}
         <div className="text-center text-3xl py-8">
           <Title text1="BEST" text2="SELLERS" />
           <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
             Our most loved and frequently purchased products — trusted by
-            retailers, event planners, and bulk buyers for their quality,
-            design, and value.
+            retailers, event planners, and bulk buyers.
           </p>
         </div>
 
         {/* Content */}
-        {isLoading ? (
+        {loading ? (
           <BestSellerSkeleton count={5} />
         ) : isEmpty ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -50,7 +46,7 @@ const BestSeller = () => {
             </h3>
             <p className="text-gray-500 max-w-md">
               Best-selling products will appear here once they are marked by the
-              admin. Please check back soon.
+              admin.
             </p>
           </div>
         ) : (

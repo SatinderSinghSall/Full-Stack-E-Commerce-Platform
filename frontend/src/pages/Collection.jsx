@@ -16,26 +16,25 @@ const Collection = () => {
   const [subCategory, setSubCategory] = useState([]);
   const [sortType, setSortType] = useState("relavent");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageLoading, setPageLoading] = useState(true);
-
-  const isLoading = pageLoading;
-  const isEmpty = !pageLoading && filterProducts.length === 0;
+  const [loading, setLoading] = useState(true);
 
   /* -------------------- FILTER HANDLERS -------------------- */
   const toggleCategory = (e) => {
-    if (category.includes(e.target.value)) {
-      setCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value],
+    );
   };
 
   const toggleSubCategory = (e) => {
-    if (subCategory.includes(e.target.value)) {
-      setSubCategory((prev) => prev.filter((item) => item !== e.target.value));
-    } else {
-      setSubCategory((prev) => [...prev, e.target.value]);
-    }
+    const value = e.target.value;
+    setSubCategory((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value],
+    );
   };
 
   /* -------------------- APPLY FILTER -------------------- */
@@ -69,18 +68,31 @@ const Collection = () => {
 
     switch (sortType) {
       case "low-high":
-        setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
+        fpCopy.sort((a, b) => a.price - b.price);
         break;
       case "high-low":
-        setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
+        fpCopy.sort((a, b) => b.price - a.price);
         break;
       default:
         applyFilter();
-        break;
+        return;
     }
+
+    setFilterProducts(fpCopy);
   };
 
   /* -------------------- EFFECTS -------------------- */
+
+  // Loading logic (FIXED)
+  useEffect(() => {
+    if (!products || products.length === 0) {
+      setLoading(true);
+      return;
+    }
+
+    setLoading(false);
+  }, [products]);
+
   useEffect(() => {
     applyFilter();
     setCurrentPage(1);
@@ -93,14 +105,6 @@ const Collection = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
-    }, 300); // small delay avoids flicker
-
-    return () => clearTimeout(timer);
-  }, [products]);
 
   /* -------------------- PAGINATION -------------------- */
   const totalPages = Math.ceil(filterProducts.length / ITEMS_PER_PAGE);
@@ -125,6 +129,8 @@ const Collection = () => {
 
     return pages;
   };
+
+  const isEmpty = !loading && filterProducts.length === 0;
 
   /* -------------------- JSX -------------------- */
   return (
@@ -151,22 +157,23 @@ const Collection = () => {
           >
             <p className="mb-3 text-sm font-medium">CATEGORIES</p>
             <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-              <p className="flex gap-2">
+              <label className="flex gap-2">
                 <input
                   type="checkbox"
                   value="Decorations"
                   onChange={toggleCategory}
                 />
                 Decorations
-              </p>
-              <p className="flex gap-2">
+              </label>
+
+              <label className="flex gap-2">
                 <input
                   type="checkbox"
                   value="Gifts"
                   onChange={toggleCategory}
                 />
                 Gifts
-              </p>
+              </label>
             </div>
           </div>
         </div>
@@ -174,7 +181,7 @@ const Collection = () => {
         {/* Right Side */}
         <div className="flex-1">
           <div className="flex justify-between text-base sm:text-2xl mb-4">
-            <Title text1={"ALL"} text2={"COLLECTIONS"} />
+            <Title text1="ALL" text2="COLLECTIONS" />
             <select
               onChange={(e) => setSortType(e.target.value)}
               className="border-2 border-gray-300 text-sm px-2"
@@ -185,8 +192,8 @@ const Collection = () => {
             </select>
           </div>
 
-          {/* Products / Empty State */}
-          {isLoading ? (
+          {/* Content */}
+          {loading ? (
             <CollectionSkeleton count={12} />
           ) : isEmpty ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -194,8 +201,7 @@ const Collection = () => {
                 No products available
               </h2>
               <p className="text-gray-500 max-w-md mb-6">
-                Products haven’t been added to this collection yet. Please check
-                back later.
+                Products haven’t been added to this collection yet.
               </p>
 
               {(category.length > 0 || subCategory.length > 0 || search) && (

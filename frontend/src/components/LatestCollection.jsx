@@ -8,36 +8,27 @@ import LatestCollectionSkeleton from "./LatestCollectionSkeleton";
 const LatestCollection = () => {
   const { products } = useContext(ShopContext);
   const [latestProducts, setLatestProducts] = useState([]);
-  const [pageLoading, setPageLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setPageLoading(false);
+    // still loading if products not ready
+    if (!products || products.length === 0) {
+      setLoading(true);
+      return;
+    }
 
-      if (products.length > 0) {
-        setLatestProducts(products.slice(0, 10));
-      } else {
-        setLatestProducts([]);
-      }
-    }, 300); // prevents flicker
-
-    return () => clearTimeout(timer);
+    // products are ready
+    setLatestProducts(products.slice(0, 10));
+    setLoading(false);
   }, [products]);
 
-  // useEffect(() => {
-  //   if (products.length > 0) {
-  //     setLatestProducts(products.slice(0, 10));
-  //   }
-  // }, [products]);
-
-  const isLoading = pageLoading;
-  const isEmpty = !pageLoading && products.length === 0;
+  const isEmpty = !loading && latestProducts.length === 0;
 
   return (
     <section className="mt-10 mb-26">
-      {/* Section Header */}
+      {/* Header */}
       <div className="text-center text-3xl py-8">
-        <Title text1={"LATEST"} text2={"COLLECTIONS"} />
+        <Title text1="LATEST" text2="COLLECTIONS" />
         <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
           Discover our newest handcrafted cane baskets and eco-friendly
           packaging solutions — designed for bulk orders, gifting, and everyday
@@ -47,7 +38,7 @@ const LatestCollection = () => {
 
       {/* Content */}
       <div className="w-full px-6 sm:px-10 lg:px-16">
-        {isLoading ? (
+        {loading ? (
           <LatestCollectionSkeleton count={8} />
         ) : isEmpty ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -56,7 +47,6 @@ const LatestCollection = () => {
             </h3>
             <p className="text-gray-500 max-w-md">
               Our latest collections will appear here once products are added.
-              Please check back soon.
             </p>
           </div>
         ) : (
@@ -79,7 +69,7 @@ const LatestCollection = () => {
       </div>
 
       {/* CTA */}
-      {!isLoading && !isEmpty && (
+      {!loading && !isEmpty && (
         <div className="text-center mt-20">
           <Link
             to="/collection"
