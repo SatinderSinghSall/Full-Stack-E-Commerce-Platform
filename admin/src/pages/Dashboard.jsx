@@ -22,7 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import Skeleton from "@/components/ui/skeleton";
+import Skeleton from "@/components/ui/Skeleton";
 
 const Dashboard = ({ token }) => {
   const [loading, setLoading] = useState(true);
