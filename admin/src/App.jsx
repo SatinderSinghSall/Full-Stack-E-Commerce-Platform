@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import UsersPage from "./pages/Users";
+import { backendUrl } from "./config";
 
 // export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 // export const currency = "₹";
