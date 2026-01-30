@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { backendUrl, currency } from "../App";
@@ -32,14 +32,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+const ORDERS_PER_PAGE = 6;
+
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* ---------------- FETCH ORDERS ---------------- */
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  /* ---------------- FETCH ---------------- */
   const fetchAllOrders = async () => {
     if (!token) return;
-
     try {
       setLoading(true);
       const res = await axios.post(
@@ -47,33 +51,13 @@ const Orders = ({ token }) => {
         {},
         { headers: { token } },
       );
-
       if (res.data.success) {
         setOrders(res.data.orders.reverse());
-      } else {
-        toast.error(res.data.message);
       }
-    } catch (error) {
-      toast.error(error.message);
+    } catch (err) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  /* ---------------- UPDATE STATUS ---------------- */
-  const statusHandler = async (status, orderId) => {
-    try {
-      const res = await axios.post(
-        backendUrl + "/api/order/status",
-        { orderId, status },
-        { headers: { token } },
-      );
-
-      if (res.data.success) {
-        fetchAllOrders();
-      }
-    } catch (error) {
-      toast.error(error.message);
     }
   };
 
@@ -81,18 +65,73 @@ const Orders = ({ token }) => {
     fetchAllOrders();
   }, [token]);
 
+  /* ---------------- STATUS ---------------- */
+  const statusHandler = async (status, orderId) => {
+    try {
+      await axios.post(
+        backendUrl + "/api/order/status",
+        { orderId, status },
+        { headers: { token } },
+      );
+      fetchAllOrders();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  /* ---------------- SEARCH ---------------- */
+  const filteredOrders = useMemo(() => {
+    if (!search) return orders;
+    const s = search.toLowerCase();
+    return orders.filter(
+      (o) =>
+        `${o.address.firstName} ${o.address.lastName}`
+          .toLowerCase()
+          .includes(s) ||
+        o.address.phone.includes(s) ||
+        o.status.toLowerCase().includes(s) ||
+        o.paymentMethod.toLowerCase().includes(s),
+    );
+  }, [orders, search]);
+
+  useEffect(() => setCurrentPage(1), [search]);
+
+  /* ---------------- PAGINATION ---------------- */
+  const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
+  const paginatedOrders = filteredOrders.slice(
+    (currentPage - 1) * ORDERS_PER_PAGE,
+    currentPage * ORDERS_PER_PAGE,
+  );
+
+  /* Scroll to top on page change */
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [currentPage]);
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-xl font-semibold">Orders</h2>
-        <p className="text-sm text-muted-foreground">
-          Manage and track customer orders
-        </p>
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">Orders</h2>
+          <p className="text-sm text-muted-foreground">
+            Manage and track customer orders
+          </p>
+        </div>
+
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search orders..."
+          className="border rounded-md px-3 py-2 text-sm sm:max-w-xs"
+        />
       </div>
 
-      {/* Orders Table */}
-      <div className="rounded-lg border bg-white overflow-x-auto">
+      {/* ================= DESKTOP TABLE ================= */}
+      <div className="hidden md:block rounded-lg border bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -111,183 +150,186 @@ const Orders = ({ token }) => {
                   Loading orders...
                 </TableCell>
               </TableRow>
-            ) : orders.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-10">
-                  No orders found
-                </TableCell>
-              </TableRow>
             ) : (
-              orders.map((order) => (
-                <TableRow key={order._id} className="align-top">
-                  {/* Order Items */}
-                  <TableCell>
-                    <div className="flex gap-3">
-                      <img
-                        src={assets.parcel_icon}
-                        alt="order"
-                        className="w-10 h-10"
-                      />
-                      <div className="text-sm">
-                        {order.items.map((item, idx) => (
-                          <p key={idx}>
-                            {item.name} × {item.quantity}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  </TableCell>
-
-                  {/* Customer */}
-                  <TableCell>
-                    <p className="font-medium">
-                      {order.address.firstName} {order.address.lastName}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {order.address.phone}
-                    </p>
-                  </TableCell>
-
-                  {/* Order Meta */}
-                  <TableCell className="text-sm space-y-1">
-                    <p>Items: {order.items.length}</p>
-                    <p>Method: {order.paymentMethod}</p>
-                    <p>
-                      Payment:{" "}
-                      <Badge variant={order.payment ? "default" : "secondary"}>
-                        {order.payment ? "Paid" : "Pending"}
-                      </Badge>
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()}
-                    </p>
-                  </TableCell>
-
-                  {/* Amount */}
-                  <TableCell className="font-medium">
-                    {currency}
-                    {order.amount}
-                  </TableCell>
-
-                  {/* Status + View */}
-                  <TableCell className="space-y-2">
-                    <Select
-                      value={order.status}
-                      onValueChange={(value) => statusHandler(value, order._id)}
-                    >
-                      <SelectTrigger className="w-[160px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Order Placed">
-                          Order Placed
-                        </SelectItem>
-                        <SelectItem value="Packing">Packing</SelectItem>
-                        <SelectItem value="Shipped">Shipped</SelectItem>
-                        <SelectItem value="Out for delivery">
-                          Out for delivery
-                        </SelectItem>
-                        <SelectItem value="Delivered">Delivered</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    {/* VIEW ORDER MODAL */}
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button size="sm" variant="outline" className="w-full">
-                          View
-                        </Button>
-                      </DialogTrigger>
-
-                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>Order Details</DialogTitle>
-                        </DialogHeader>
-
-                        <div className="space-y-4 text-sm">
-                          {/* Customer */}
-                          <div>
-                            <p className="font-medium">Customer</p>
-                            <p>
-                              {order.address.firstName} {order.address.lastName}
-                            </p>
-                            <p className="text-muted-foreground">
-                              {order.address.phone}
-                            </p>
-                          </div>
-
-                          {/* Address */}
-                          <div>
-                            <p className="font-medium">Delivery Address</p>
-                            <p className="text-muted-foreground">
-                              {order.address.street}, {order.address.city},{" "}
-                              {order.address.state}, {order.address.country} -{" "}
-                              {order.address.zipcode}
-                            </p>
-                          </div>
-
-                          {/* Items */}
-                          <div>
-                            <p className="font-medium mb-2">Items</p>
-                            <div className="space-y-2">
-                              {order.items.map((item, idx) => (
-                                <div
-                                  key={idx}
-                                  className="flex justify-between border rounded-md p-2"
-                                >
-                                  <span>
-                                    {item.name} × {item.quantity}
-                                  </span>
-                                  <span>
-                                    {currency}
-                                    {item.price * item.quantity}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Payment */}
-                          <div className="flex justify-between">
-                            <span>Payment Method</span>
-                            <span className="font-medium">
-                              {order.paymentMethod}
-                            </span>
-                          </div>
-
-                          <div className="flex justify-between">
-                            <span>Payment Status</span>
-                            <Badge
-                              variant={order.payment ? "default" : "secondary"}
-                            >
-                              {order.payment ? "Paid" : "Pending"}
-                            </Badge>
-                          </div>
-
-                          {/* Total */}
-                          <div className="flex justify-between text-base font-semibold border-t pt-3">
-                            <span>Total</span>
-                            <span>
-                              {currency}
-                              {order.amount}
-                            </span>
-                          </div>
-
-                          <p className="text-xs text-muted-foreground text-right">
-                            Ordered on {new Date(order.date).toLocaleString()}
-                          </p>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </TableCell>
-                </TableRow>
+              paginatedOrders.map((order) => (
+                <DesktopRow
+                  key={order._id}
+                  order={order}
+                  statusHandler={statusHandler}
+                />
               ))
             )}
           </TableBody>
         </Table>
       </div>
+
+      {/* ================= MOBILE CARDS ================= */}
+      <div className="md:hidden space-y-4">
+        {loading ? (
+          <p className="text-center py-10">Loading orders...</p>
+        ) : (
+          paginatedOrders.map((order) => (
+            <MobileOrderCard
+              key={order._id}
+              order={order}
+              statusHandler={statusHandler}
+            />
+          ))
+        )}
+      </div>
+
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 pt-4">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
+            Prev
+          </Button>
+
+          {[...Array(totalPages)].map((_, i) => (
+            <Button
+              key={i}
+              size="sm"
+              variant={currentPage === i + 1 ? "default" : "outline"}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </Button>
+          ))}
+
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
+
+/* ================= DESKTOP ROW ================= */
+const DesktopRow = ({ order, statusHandler }) => (
+  <TableRow className="align-top">
+    <TableCell>
+      <div className="flex gap-3">
+        <img src={assets.parcel_icon} className="w-10 h-10" />
+        <div className="text-sm">
+          {order.items.map((i, idx) => (
+            <p key={idx}>
+              {i.name} × {i.quantity}
+            </p>
+          ))}
+        </div>
+      </div>
+    </TableCell>
+
+    <TableCell>
+      <p className="font-medium">
+        {order.address.firstName} {order.address.lastName}
+      </p>
+      <p className="text-sm text-muted-foreground">{order.address.phone}</p>
+    </TableCell>
+
+    <TableCell className="text-sm space-y-1">
+      <p>Items: {order.items.length}</p>
+      <p>Method: {order.paymentMethod}</p>
+      <Badge variant={order.payment ? "default" : "secondary"}>
+        {order.payment ? "Paid" : "Pending"}
+      </Badge>
+    </TableCell>
+
+    <TableCell className="font-medium">
+      {currency}
+      {order.amount}
+    </TableCell>
+
+    <TableCell>
+      <Select
+        value={order.status}
+        onValueChange={(v) => statusHandler(v, order._id)}
+      >
+        <SelectTrigger className="w-[160px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {[
+            "Order Placed",
+            "Packing",
+            "Shipped",
+            "Out for delivery",
+            "Delivered",
+          ].map((s) => (
+            <SelectItem key={s} value={s}>
+              {s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </TableCell>
+  </TableRow>
+);
+
+/* ================= MOBILE CARD ================= */
+const MobileOrderCard = ({ order, statusHandler }) => (
+  <div className="border rounded-lg p-4 space-y-3 bg-white">
+    <div className="flex justify-between">
+      <div>
+        <p className="font-medium">
+          {order.address.firstName} {order.address.lastName}
+        </p>
+        <p className="text-xs text-muted-foreground">{order.address.phone}</p>
+      </div>
+      <Badge variant={order.payment ? "default" : "secondary"}>
+        {order.payment ? "Paid" : "Pending"}
+      </Badge>
+    </div>
+
+    <div className="text-sm space-y-1">
+      {order.items.map((i, idx) => (
+        <p key={idx}>
+          {i.name} × {i.quantity}
+        </p>
+      ))}
+    </div>
+
+    <div className="flex justify-between font-medium">
+      <span>Total</span>
+      <span>
+        {currency}
+        {order.amount}
+      </span>
+    </div>
+
+    <Select
+      value={order.status}
+      onValueChange={(v) => statusHandler(v, order._id)}
+    >
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {[
+          "Order Placed",
+          "Packing",
+          "Shipped",
+          "Out for delivery",
+          "Delivered",
+        ].map((s) => (
+          <SelectItem key={s} value={s}>
+            {s}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);
 
 export default Orders;

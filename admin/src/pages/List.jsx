@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { backendUrl, currency } from "../App";
 import { Loader2 } from "lucide-react";
@@ -38,11 +38,17 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+const ITEMS_PER_PAGE = 8;
+
 const List = ({ token }) => {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [editProduct, setEditProduct] = useState(null);
   const [updating, setUpdating] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   /* ---------------- FETCH PRODUCTS ---------------- */
   const fetchList = async () => {
@@ -114,15 +120,60 @@ const List = ({ token }) => {
     fetchList();
   }, []);
 
+  /* ---------------- SEARCH ---------------- */
+  const filteredList = useMemo(() => {
+    if (!search) return list;
+
+    return list.filter(
+      (item) =>
+        item.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.category.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [list, search]);
+
+  /* Reset page on search */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  /* ---------------- PAGINATION ---------------- */
+  const totalPages = Math.ceil(filteredList.length / ITEMS_PER_PAGE);
+
+  const paginatedList = filteredList.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
+
+  /* Scroll to top on page change */
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [currentPage]);
+
+  /* ---------------- UI ---------------- */
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold">All Products</h2>
-        <p className="text-sm text-muted-foreground">
-          View, edit or remove products
-        </p>
+      {/* HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold">All Products</h2>
+          <p className="text-sm text-muted-foreground">
+            View, edit or remove products
+          </p>
+        </div>
+
+        {/* SEARCH */}
+        <Input
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="sm:max-w-xs"
+        />
       </div>
 
+      {/* TABLE */}
       <div className="rounded-lg border bg-white overflow-x-auto">
         <Table>
           <TableHeader>
@@ -142,14 +193,14 @@ const List = ({ token }) => {
                   <Loader2 className="mx-auto animate-spin" />
                 </TableCell>
               </TableRow>
-            ) : list.length === 0 ? (
+            ) : paginatedList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-10">
                   No products found
                 </TableCell>
               </TableRow>
             ) : (
-              list.map((item) => (
+              paginatedList.map((item) => (
                 <TableRow key={item._id}>
                   <TableCell>
                     <img
@@ -248,6 +299,40 @@ const List = ({ token }) => {
           </TableBody>
         </Table>
       </div>
+
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
+            Prev
+          </Button>
+
+          {[...Array(totalPages)].map((_, i) => (
+            <Button
+              key={i}
+              size="sm"
+              variant={currentPage === i + 1 ? "default" : "outline"}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </Button>
+          ))}
+
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* EDIT MODAL */}
       <Dialog open={!!editProduct} onOpenChange={() => setEditProduct(null)}>
