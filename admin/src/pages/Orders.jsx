@@ -24,6 +24,17 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 import OrderDetailsDialog from "@/components/OrderDetailsDialog";
 
 const ORDERS_PER_PAGE = 6;
@@ -37,6 +48,11 @@ const Orders = ({ token }) => {
 
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // delete dialog states
+  const [deleteOrderId, setDeleteOrderId] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   /* ---------------- FETCH ORDERS ---------------- */
   const fetchAllOrders = async () => {
@@ -74,6 +90,30 @@ const Orders = ({ token }) => {
       fetchAllOrders();
     } catch (err) {
       toast.error(err.message);
+    }
+  };
+
+  /* ---------------- DELETE ORDER ---------------- */
+  const confirmDeleteOrder = async () => {
+    if (!deleteOrderId) return;
+
+    try {
+      setDeleting(true);
+
+      await axios.post(
+        backendUrl + "/api/order/delete",
+        { orderId: deleteOrderId },
+        { headers: { token } },
+      );
+
+      toast.success("Order deleted");
+      setOpenDeleteDialog(false);
+      setDeleteOrderId(null);
+      fetchAllOrders();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -136,13 +176,14 @@ const Orders = ({ token }) => {
               <TableHead>Details</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-10">
+                <TableCell colSpan={6} className="text-center py-10">
                   Loading orders...
                 </TableCell>
               </TableRow>
@@ -152,6 +193,10 @@ const Orders = ({ token }) => {
                   key={order._id}
                   order={order}
                   statusHandler={statusHandler}
+                  onDelete={() => {
+                    setDeleteOrderId(order._id);
+                    setOpenDeleteDialog(true);
+                  }}
                   setSelectedOrder={setSelectedOrder}
                   setOpenDialog={setOpenDialog}
                 />
@@ -161,7 +206,7 @@ const Orders = ({ token }) => {
         </Table>
       </div>
 
-      {/* ================= MOBILE CARDS ================= */}
+      {/* ================= MOBILE ================= */}
       <div className="md:hidden space-y-4">
         {loading ? (
           <p className="text-center py-10">Loading orders...</p>
@@ -171,6 +216,10 @@ const Orders = ({ token }) => {
               key={order._id}
               order={order}
               statusHandler={statusHandler}
+              onDelete={() => {
+                setDeleteOrderId(order._id);
+                setOpenDeleteDialog(true);
+              }}
               setSelectedOrder={setSelectedOrder}
               setOpenDialog={setOpenDialog}
             />
@@ -212,12 +261,31 @@ const Orders = ({ token }) => {
         </div>
       )}
 
-      {/* ================= ORDER DETAILS DIALOG ================= */}
+      {/* ORDER DETAILS */}
       <OrderDetailsDialog
         open={openDialog}
         onOpenChange={setOpenDialog}
         order={selectedOrder}
       />
+
+      {/* DELETE CONFIRMATION */}
+      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Order?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The order will be permanently
+              removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteOrder} disabled={deleting}>
+              {deleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
@@ -226,6 +294,7 @@ const Orders = ({ token }) => {
 const DesktopRow = ({
   order,
   statusHandler,
+  onDelete,
   setSelectedOrder,
   setOpenDialog,
 }) => (
@@ -264,29 +333,32 @@ const DesktopRow = ({
     </TableCell>
 
     <TableCell>
-      <div className="space-y-2">
-        <Select
-          value={order.status}
-          onValueChange={(v) => statusHandler(v, order._id)}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {[
-              "Order Placed",
-              "Packing",
-              "Shipped",
-              "Out for delivery",
-              "Delivered",
-            ].map((s) => (
-              <SelectItem key={s} value={s}>
-                {s}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <Select
+        value={order.status}
+        onValueChange={(v) => statusHandler(v, order._id)}
+      >
+        <SelectTrigger className="w-[160px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {[
+            "Order Placed",
+            "Packing",
+            "Shipped",
+            "Out for delivery",
+            "Delivered",
+          ].map((s) => (
+            <SelectItem key={s} value={s}>
+              {s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </TableCell>
 
+    {/* ACTIONS */}
+    <TableCell>
+      <div className="flex gap-2">
         <Button
           size="sm"
           variant="outline"
@@ -297,6 +369,10 @@ const DesktopRow = ({
         >
           View More
         </Button>
+
+        <Button size="sm" variant="destructive" onClick={onDelete}>
+          Delete
+        </Button>
       </div>
     </TableCell>
   </TableRow>
@@ -306,6 +382,7 @@ const DesktopRow = ({
 const MobileOrderCard = ({
   order,
   statusHandler,
+  onDelete,
   setSelectedOrder,
   setOpenDialog,
 }) => (
@@ -360,17 +437,22 @@ const MobileOrderCard = ({
       </SelectContent>
     </Select>
 
-    <Button
-      size="sm"
-      variant="outline"
-      className="w-full"
-      onClick={() => {
-        setSelectedOrder(order);
-        setOpenDialog(true);
-      }}
-    >
-      View More
-    </Button>
+    <div className="space-y-2">
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => {
+          setSelectedOrder(order);
+          setOpenDialog(true);
+        }}
+      >
+        View More
+      </Button>
+
+      <Button size="sm" variant="destructive" onClick={onDelete}>
+        Delete Order
+      </Button>
+    </div>
   </div>
 );
 

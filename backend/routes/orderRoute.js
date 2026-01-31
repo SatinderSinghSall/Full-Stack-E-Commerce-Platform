@@ -6,6 +6,7 @@ import {
   userOrders,
   updateStatus,
   verifyStripe,
+  deleteOrder,
 } from "../controllers/orderController.js";
 import adminAuth from "../middleware/adminAuth.js";
 import authUser from "../middleware/auth.js";
@@ -23,5 +24,7 @@ orderRouter.post("/verifyStripe", authUser, verifyStripe);
 
 // User orders
 orderRouter.post("/userorders", authUser, userOrders);
+
+orderRouter.post("/delete", adminAuth, deleteOrder);
 
 export default orderRouter;
