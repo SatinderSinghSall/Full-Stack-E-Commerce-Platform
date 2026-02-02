@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
+
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
@@ -134,163 +136,176 @@ const Collection = () => {
 
   /* -------------------- JSX -------------------- */
   return (
-    <div className="px-6 sm:px-10 md:px-16 lg:px-20">
-      <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
-        {/* Filters */}
-        <div className="min-w-60">
-          <p
-            onClick={() => setShowFilter(!showFilter)}
-            className="my-2 text-xl flex items-center cursor-pointer gap-2"
-          >
-            FILTERS
-            <img
-              className={`h-3 sm:hidden ${showFilter ? "rotate-90" : ""}`}
-              src={assets.dropdown_icon}
-              alt=""
-            />
-          </p>
+    <>
+      <Helmet>
+        <title>
+          Wedding Gift Collections | Bulk & Wholesale Wedding Gifts in India
+        </title>
+        <meta
+          name="description"
+          content="Explore our complete range of wedding gifts, return gifts, trays, baskets and festive packaging available in bulk and wholesale quantities across India."
+        />
+        <link rel="canonical" href="https://gifthouse.vercel.app/collection" />
+      </Helmet>
 
-          <div
-            className={`border border-gray-300 pl-5 py-3 mt-6 ${
-              showFilter ? "" : "hidden"
-            } sm:block`}
-          >
-            <p className="mb-3 text-sm font-medium">CATEGORIES</p>
-            <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
-              <label className="flex gap-2">
-                <input
-                  type="checkbox"
-                  value="Decorations"
-                  onChange={toggleCategory}
-                />
-                Decorations
-              </label>
-
-              <label className="flex gap-2">
-                <input
-                  type="checkbox"
-                  value="Gifts"
-                  onChange={toggleCategory}
-                />
-                Gifts
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side */}
-        <div className="flex-1">
-          <div className="flex justify-between text-base sm:text-2xl mb-4">
-            <Title text1="ALL" text2="COLLECTIONS" />
-            <select
-              onChange={(e) => setSortType(e.target.value)}
-              className="border-2 border-gray-300 text-sm px-2"
+      <div className="px-6 sm:px-10 md:px-16 lg:px-20">
+        <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
+          {/* Filters */}
+          <div className="min-w-60">
+            <p
+              onClick={() => setShowFilter(!showFilter)}
+              className="my-2 text-xl flex items-center cursor-pointer gap-2"
             >
-              <option value="relavent">Sort by: Relevant</option>
-              <option value="low-high">Sort by: Low to High</option>
-              <option value="high-low">Sort by: High to Low</option>
-            </select>
+              FILTERS
+              <img
+                className={`h-3 sm:hidden ${showFilter ? "rotate-90" : ""}`}
+                src={assets.dropdown_icon}
+                alt=""
+              />
+            </p>
+
+            <div
+              className={`border border-gray-300 pl-5 py-3 mt-6 ${
+                showFilter ? "" : "hidden"
+              } sm:block`}
+            >
+              <p className="mb-3 text-sm font-medium">CATEGORIES</p>
+              <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    value="Decorations"
+                    onChange={toggleCategory}
+                  />
+                  Decorations
+                </label>
+
+                <label className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    value="Gifts"
+                    onChange={toggleCategory}
+                  />
+                  Gifts
+                </label>
+              </div>
+            </div>
           </div>
 
-          {/* Content */}
-          {loading ? (
-            <CollectionSkeleton count={12} />
-          ) : isEmpty ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                No products available
-              </h2>
-              <p className="text-gray-500 max-w-md mb-6">
-                Products haven’t been added to this collection yet.
-              </p>
-
-              {(category.length > 0 || subCategory.length > 0 || search) && (
-                <button
-                  onClick={() => {
-                    setCategory([]);
-                    setSubCategory([]);
-                    setCurrentPage(1);
-                  }}
-                  className="px-6 py-2 border border-black hover:bg-black hover:text-white transition"
-                >
-                  Clear Filters
-                </button>
-              )}
+          {/* Right Side */}
+          <div className="flex-1">
+            <div className="flex justify-between text-base sm:text-2xl mb-4">
+              <Title text1="ALL" text2="COLLECTIONS" />
+              <select
+                onChange={(e) => setSortType(e.target.value)}
+                className="border-2 border-gray-300 text-sm px-2"
+              >
+                <option value="relavent">Sort by: Relevant</option>
+                <option value="low-high">Sort by: Low to High</option>
+                <option value="high-low">Sort by: High to Low</option>
+              </select>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-                {paginatedProducts.map((item) => (
-                  <ProductItem
-                    key={item._id}
-                    id={item._id}
-                    name={item.name}
-                    price={item.price}
-                    image={item.image}
-                  />
-                ))}
+
+            {/* Content */}
+            {loading ? (
+              <CollectionSkeleton count={12} />
+            ) : isEmpty ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+                  No products available
+                </h2>
+                <p className="text-gray-500 max-w-md mb-6">
+                  Products haven’t been added to this collection yet.
+                </p>
+
+                {(category.length > 0 || subCategory.length > 0 || search) && (
+                  <button
+                    onClick={() => {
+                      setCategory([]);
+                      setSubCategory([]);
+                      setCurrentPage(1);
+                    }}
+                    className="px-6 py-2 border border-black hover:bg-black hover:text-white transition"
+                  >
+                    Clear Filters
+                  </button>
+                )}
               </div>
-
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
-                  <button
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    First
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentPage((p) => p - 1)}
-                    disabled={currentPage === 1}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    Prev
-                  </button>
-
-                  {getPageNumbers().map((page, i) =>
-                    page === "..." ? (
-                      <span key={i} className="px-2 text-gray-500">
-                        ...
-                      </span>
-                    ) : (
-                      <button
-                        key={i}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 border rounded ${
-                          currentPage === page
-                            ? "bg-black text-white"
-                            : "hover:bg-gray-100"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ),
-                  )}
-
-                  <button
-                    onClick={() => setCurrentPage((p) => p + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    Next
-                  </button>
-
-                  <button
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1 border rounded disabled:opacity-40"
-                  >
-                    Last
-                  </button>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+                  {paginatedProducts.map((item) => (
+                    <ProductItem
+                      key={item._id}
+                      id={item._id}
+                      name={item.name}
+                      price={item.price}
+                      image={item.image}
+                    />
+                  ))}
                 </div>
-              )}
-            </>
-          )}
+
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border rounded disabled:opacity-40"
+                    >
+                      First
+                    </button>
+
+                    <button
+                      onClick={() => setCurrentPage((p) => p - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border rounded disabled:opacity-40"
+                    >
+                      Prev
+                    </button>
+
+                    {getPageNumbers().map((page, i) =>
+                      page === "..." ? (
+                        <span key={i} className="px-2 text-gray-500">
+                          ...
+                        </span>
+                      ) : (
+                        <button
+                          key={i}
+                          onClick={() => setCurrentPage(page)}
+                          className={`px-3 py-1 border rounded ${
+                            currentPage === page
+                              ? "bg-black text-white"
+                              : "hover:bg-gray-100"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
+
+                    <button
+                      onClick={() => setCurrentPage((p) => p + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border rounded disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border rounded disabled:opacity-40"
+                    >
+                      Last
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
