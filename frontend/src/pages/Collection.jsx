@@ -86,12 +86,16 @@ const Collection = () => {
   /* -------------------- EFFECTS -------------------- */
 
   // Loading logic (FIXED)
-  useEffect(() => {
-    if (!products || products.length === 0) {
-      setLoading(true);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!products || products.length === 0) {
+  //     setLoading(true);
+  //     return;
+  //   }
 
+  //   setLoading(false);
+  // }, [products]);
+
+  useEffect(() => {
     setLoading(false);
   }, [products]);
 

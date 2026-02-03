@@ -9,14 +9,22 @@ const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // if products are not yet available, keep loading
-    if (!products || products.length === 0) {
-      setLoading(true);
-      return;
-    }
+  // useEffect(() => {
+  //   // if products are not yet available, keep loading
+  //   if (!products || products.length === 0) {
+  //     setLoading(true);
+  //     return;
+  //   }
 
-    // once products arrive
+  //   // once products arrive
+  //   const bestProduct = products.filter((item) => item.bestseller);
+  //   setBestSeller(bestProduct.slice(0, 5));
+  //   setLoading(false);
+  // }, [products]);
+
+  useEffect(() => {
+    if (!products) return; // still fetching
+
     const bestProduct = products.filter((item) => item.bestseller);
     setBestSeller(bestProduct.slice(0, 5));
     setLoading(false);

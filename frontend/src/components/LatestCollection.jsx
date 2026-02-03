@@ -10,14 +10,21 @@ const LatestCollection = () => {
   const [latestProducts, setLatestProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // still loading if products not ready
-    if (!products || products.length === 0) {
-      setLoading(true);
-      return;
-    }
+  // useEffect(() => {
+  //   // still loading if products not ready
+  //   if (!products || products.length === 0) {
+  //     setLoading(true);
+  //     return;
+  //   }
 
-    // products are ready
+  //   // products are ready
+  //   setLatestProducts(products.slice(0, 10));
+  //   setLoading(false);
+  // }, [products]);
+
+  useEffect(() => {
+    if (!products) return; // still fetching
+
     setLatestProducts(products.slice(0, 10));
     setLoading(false);
   }, [products]);
