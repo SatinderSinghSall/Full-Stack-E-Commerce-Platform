@@ -5,30 +5,17 @@ import ProductItem from "./ProductItem";
 import BestSellerSkeleton from "./BestSellerSkeleton";
 
 const BestSeller = () => {
-  const { products } = useContext(ShopContext);
+  const { products, productsLoading } = useContext(ShopContext);
   const [bestSeller, setBestSeller] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = productsLoading;
 
-  // useEffect(() => {
-  //   // if products are not yet available, keep loading
-  //   if (!products || products.length === 0) {
-  //     setLoading(true);
-  //     return;
-  //   }
-
-  //   // once products arrive
-  //   const bestProduct = products.filter((item) => item.bestseller);
-  //   setBestSeller(bestProduct.slice(0, 5));
-  //   setLoading(false);
-  // }, [products]);
-
+  /* ---------------- COMPUTE BEST SELLERS ---------------- */
   useEffect(() => {
-    if (!products) return; // still fetching
+    if (loading) return;
 
     const bestProduct = products.filter((item) => item.bestseller);
     setBestSeller(bestProduct.slice(0, 5));
-    setLoading(false);
-  }, [products]);
+  }, [products, loading]);
 
   const isEmpty = !loading && bestSeller.length === 0;
 

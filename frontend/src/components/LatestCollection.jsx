@@ -6,28 +6,16 @@ import { Link } from "react-router-dom";
 import LatestCollectionSkeleton from "./LatestCollectionSkeleton";
 
 const LatestCollection = () => {
-  const { products } = useContext(ShopContext);
+  const { products, productsLoading } = useContext(ShopContext);
   const [latestProducts, setLatestProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = productsLoading;
 
-  // useEffect(() => {
-  //   // still loading if products not ready
-  //   if (!products || products.length === 0) {
-  //     setLoading(true);
-  //     return;
-  //   }
-
-  //   // products are ready
-  //   setLatestProducts(products.slice(0, 10));
-  //   setLoading(false);
-  // }, [products]);
-
+  /* ---------------- COMPUTE LATEST PRODUCTS ---------------- */
   useEffect(() => {
-    if (!products) return; // still fetching
+    if (loading) return;
 
     setLatestProducts(products.slice(0, 10));
-    setLoading(false);
-  }, [products]);
+  }, [products, loading]);
 
   const isEmpty = !loading && latestProducts.length === 0;
 
